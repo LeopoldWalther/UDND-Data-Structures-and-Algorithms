@@ -9,7 +9,7 @@ class Node(object):
 class LRU_Cache(object):
     """Least Recently Used (LRU) cache"""
 
-    def __init__(self, capacity):  # all actions O(1)
+    def __init__(self, capacity):  # all operations are of O(1)
         """Initialize class variables"""
         self.cache = dict()
         self.capacity = capacity
@@ -17,7 +17,7 @@ class LRU_Cache(object):
         self.head = None
         self.tail = None
 
-    def get(self, key):  # all actions O(1)
+    def get(self, key):  # all operations are of O(1)
         """Retrieve item from provided key. Return -1 if nonexistent"""
         if key in self.cache:  # cache hit -> return value
             new_node = self.cache[key]
@@ -26,7 +26,7 @@ class LRU_Cache(object):
         else:  # cache miss -> -1
             return -1
 
-    def set(self, key, value):  # all actions O(1)
+    def set(self, key, value):  # all operations are of O(1)
         """Set the value if the key is not present in the cache"""
         new_node = Node(value)
         if key not in self.cache:
@@ -35,7 +35,7 @@ class LRU_Cache(object):
         else:  # when key already exists, only move up in least recently used list
             self.update_least_recently_used_list(new_node)
 
-    def update_least_recently_used_list(self, new_node):  # all actions O(1)
+    def update_least_recently_used_list(self, new_node):  # all operations are of O(1)
         """
         For get and set methods moves the least recent used value to head of the doubly linked list.
         If a new_node is given to this function it is tested that it already is part of the linked list
@@ -59,12 +59,12 @@ class LRU_Cache(object):
         # make used node head
         self.set_new_head(new_node)
 
-    def set_cache(self, key, new_node):  # all actions O(1)
+    def set_cache(self, key, new_node):  # all operations are of O(1)
         """Append element to Doubly Linked List"""
         self.cache[key] = new_node
         self.current_size += 1
 
-    def set_new_head(self, new_node):  # all actions O(1)
+    def set_new_head(self, new_node):  # all operations are of O(1)
         if not self.capacity_available():
             self.delete_least_recent_used()
 
@@ -78,14 +78,14 @@ class LRU_Cache(object):
             new_node.next = self.head
             self.head = new_node
 
-    def capacity_available(self):  # all actions O(1)
+    def capacity_available(self):  # all operations are of O(1)
         """Check if amount of elements lower than capacity"""
         if self.current_size < self.capacity:
             return True
         else:
             return False
 
-    def delete_least_recent_used(self):  # all actions O(1)
+    def delete_least_recent_used(self):  # all operations are of O(1)
         """Delete last element of Doubly Linked List"""
         deletion_node = self.tail
         del self.cache[deletion_node.value]
