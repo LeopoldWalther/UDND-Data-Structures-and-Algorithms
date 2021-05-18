@@ -1,0 +1,49 @@
+Task 0:
+- Worst Case Complexity: O(1)
+- Algorithm:
+  - create 2 lists: calls, texts O(1)
+  - Print out string and 3 elements of array with indices O(1)
+  - print out string and 4 elements of array with indices O(1)
+
+Task 1:
+- Worst Case Complexity: O(n)
+- Algorithm:
+  - create 2 lists: calls, texts O(1)
+  - initialize set O(1)
+  - run through complete array and add element O(n)
+  - run through complete array and add element O(n)
+
+Task 2:
+- Worst Case Complexity: O(n)
+- Algorithm:
+  - create 2 lists: calls, texts O(1)
+  - initialize dictionary O(n)
+  - run through complete array and access dictionary with key O(n)
+  - get max value of dictionary O(n)
+
+Task 3:
+- Worst Case Complexity: O(n log(n))
+- Algorithm:
+  - create 2 lists: calls, texts O(1)
+  - initialize set O(1)
+  - loop through complete array and check each element for string O(n)
+  - loop through complete set and print O(k) where k<n
+  - initialize two empty integers O(1)
+  - for loop through complete array and check for string O(n)
+  - calculate percentage O(1)
+
+Task 4:
+- Worst Case Complexity: O(n log(n))
+- Algorithm:
+  - create 2 lists: calls, texts O(1)
+  - loop through complete array O(n) and check add element O(1)
+  - loop through complete array O(n) and check add element O(1)
+  - make union
+  - make difference
+  - create array
+  - sort array O(n*log(n))
+
+
+Important note:
+- If you are searching an element in a list/tuple/array, it will take O(n) runtime.
+- If you are searching an element in a set/dictionary, it will take O(1) runtime.
