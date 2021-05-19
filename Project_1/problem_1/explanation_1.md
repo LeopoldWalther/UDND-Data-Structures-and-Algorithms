@@ -25,9 +25,9 @@ To additionally
     list can be directly accessed with the dictionary.
 
 
-## Efficieny
+## Efficiency
 ### Time
-There is no recursion of for-loop in the code. 
+There is no recursion or for-loop in the code. 
 All operations are of constant time complexity O(1).
 
 ### Space
