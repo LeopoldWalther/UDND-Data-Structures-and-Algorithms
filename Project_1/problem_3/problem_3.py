@@ -15,6 +15,8 @@ class HuffmannCompressor(object):
 
         # create node for each row in table
         min_heap = self.heapify_frequency_dictionary()
+        print('-----------------------------')
+        min_heap_2 = self.heapify_frequency_dictionary_2()
 
         # build and sort list of nodes (minHeap as priority queue)
         # A) pop out two nodes with min frequency from priority queue
@@ -48,6 +50,14 @@ class HuffmannCompressor(object):
             heapq.heappush(min_heap, new_node)
         return min_heap
 
+    def heapify_frequency_dictionary_2(self):
+        min_heap = MinHeap(len(self.frequency_dictionary))
+        for character, frequency in self.frequency_dictionary.items():
+            new_node = HuffmannNode(character, frequency)
+            print('Heapifying', new_node.character, new_node.frequency)
+            min_heap.insert(new_node)
+        return min_heap
+
     def huffman_decoding(self, data, tree):
 
         if not self.is_encoded:
@@ -76,6 +86,13 @@ class HuffmannNode(object):
         if not isinstance(other, HuffmannNode):
             return -1
         return self.frequency > other.frequency
+
+    def __lt__(self, other):
+        if not other:
+            return -1
+        if not isinstance(other, HuffmannNode):
+            return -1
+        return self.frequency < other.frequency
 
     def get_character(self):
         print(self.character)
@@ -142,7 +159,7 @@ class MinHeap(object):
 
         current_position = self.size
 
-        while self.heap[current_position].frequency < self.heap[self.get_parent(current_position)].frequency:
+        while self.heap[current_position] < self.heap[self.get_parent(current_position)]:
             self.swap_nodes(current_position, self.get_parent(current_position))
             current_position = self.get_parent(current_position)
 
@@ -155,11 +172,10 @@ class MinHeap(object):
 
     def heapify_node(self, position):
         if not self.is_leaf(position):
-            if self.heap[position].frequency > self.heap[self.get_left_child(position)].frequency \
-                    or self.heap[position].frequency > self.heap[self.get_right_child(position)].frequency:
+            if self.heap[position] > self.heap[self.get_left_child(position)] \
+                    or self.heap[position] > self.heap[self.get_right_child(position)]:
 
-                if self.heap[self.get_left_child(position)].frequency < \
-                        self.heap[self.get_right_child(position)].frequency:
+                if self.heap[self.get_left_child(position)] < self.heap[self.get_right_child(position)]:
 
                     self.swap_nodes(position, self.get_left_child(position))
                     self.heapify_node(self.get_left_child(position))
