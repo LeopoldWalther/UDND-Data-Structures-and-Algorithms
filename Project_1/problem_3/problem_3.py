@@ -2,10 +2,26 @@ import sys
 
 
 def huffman_encoding(data):
+    # determine frequency and create table from it
+    # create node for each row in table
+    # build and sort list of nodes (minHeap as priority queue)
+    # A) pop out two nodes with min frequency from priority queue
+    # B) create new node with frequency as sum of two nodes popped out (new Node in Huffmann Tree)
+    # C) reinsert new node in priority queue
+    # repeat A)-C) until only one element in prio queue
+    # assign zero to left, 1 to right
+    # traverse Huffmann Tree rfrom root to leaf -> results in binary code
     pass
 
 
 def huffman_decoding(data, tree):
+    # declare a blank decoded string
+    # A) pick bit from encoded data, traversing from left to right
+    # B) traverse Huffmann Tree from root
+    #       if current bit of encoded data = 0 -> move left
+    #       else move right
+    #       if leaf node: append alphabetical char to decode
+    # repeat A)-B) until end
     pass
 
 
@@ -76,7 +92,7 @@ class MinHeap(object):
             self.heapify_node(position)
 
 
-class BinaryTreeNode(object):
+class HuffmannNode(object):
 
     def __init__(self, character=None):
         self.left = None
@@ -109,7 +125,7 @@ class BinaryTreeNode(object):
 class BinaryTree(object):
 
     def __init__(self, character=None):
-        self.root = BinaryTreeNode(character)
+        self.root = HuffmannNode(character)
 
     def get_root(self):
         return self.root
@@ -147,7 +163,7 @@ if __name__ == "__main__":
     print("New Min value: " + str(minHeap.remove()))
     # expected output: 2
 
-    
+
     """
 
     codes = {}
