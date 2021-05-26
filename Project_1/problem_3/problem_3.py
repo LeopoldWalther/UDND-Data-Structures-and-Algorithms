@@ -4,24 +4,26 @@ import heapq
 
 class HuffmanCompressor(object):
 
-    def __init__(self, data=None):
-        self.data = data
+    def __init__(self):
+        self.decoded_data = ''
         self.encoded_data = ''
         self.frequency_dictionary = dict()
         self.encoding_dictionary = dict()
-        self.is_encoded = False
         self.min_heap = None
         self.leaf_nodes = None
+        self.tree = None
 
-    def huffman_encoding(self):
+    def huffman_encoding(self, data):
         """Encodes the input string using Huffman Compression"""
+        self.decoded_data = data
+        self.encoded_data = ''
+
         self.determine_character_frequency()
         self.create_priority_list_from_frequency_dictionary()
         self.create_huffman_tree()
         self.encode_characters_with_huffman_tree()
         self.create_encoded_string()
         huffman_tree = heapq.heappop(self.min_heap)
-        self.is_encoded = True
 
         print('-------------------')
         print(self.frequency_dictionary)
@@ -33,7 +35,7 @@ class HuffmanCompressor(object):
 
     def determine_character_frequency(self):
         """Counts frequency of characters in input string called data and saves result in dictionary"""
-        for character in self.data:
+        for character in self.decoded_data:
             if character not in self.frequency_dictionary:
                 self.frequency_dictionary[character] = 1
             else:
@@ -60,7 +62,7 @@ class HuffmanCompressor(object):
 
     def create_encoded_string(self):
         """Creates encoded string by adding all encoded characters into one line"""
-        for character in self.data:
+        for character in self.decoded_data:
             self.encoded_data += self.encoding_dictionary[character]
 
     def encode_characters_with_huffman_tree(self):
@@ -96,21 +98,29 @@ class HuffmanCompressor(object):
         return None
 
     def huffman_decoding(self, data, tree):
+        """Decodes data using the Huffman tree"""
+        self.encoded_data = data
+        self.decoded_data = ''
+        self.tree = tree
+        self.decoded_data = self.traverse_tree(tree, '')
+        return self.decoded_data
 
-        if not self.is_encoded:
-            return
-        # declare a blank decoded string
-        # A) pick bit from encoded data, traversing from left to right
-        # B) traverse Huffman Tree from root
-        #       if current bit of encoded data = 0 -> move left
-        #       else move right
-        #       if leaf node: append alphabetical char to decode
-        # repeat A)-B) until end
-        pass
+    def traverse_tree(self, current_node, text):
+        """Traverses the Hufmann tree following the directions as specified by the bits of encoded data"""
+        for bit in self.encoded_data:
+            if bit == '0':
+                current_node = current_node.left
+            elif bit == '1':
+                current_node = current_node.right
+
+            if current_node.left is None and current_node.right is None:
+                text += current_node.character
+                current_node = self.tree
+        return text
 
 
 class HuffmanNode(object):
-
+    """Node Class to be used for Hufman Tree and Min Heap"""
     def __init__(self, character=None, frequency=None):
         self.left = None
         self.right = None
@@ -130,36 +140,6 @@ class HuffmanNode(object):
         if not isinstance(other, HuffmanNode):
             return -1
         return self.frequency < other.frequency
-
-    def get_character(self):
-        print(self.character)
-
-    def set_left_child(self, Node):
-        self.left = Node
-
-    def set_right_child(self, Node):
-        self.left = Node
-
-    def has_left_child(self):
-        if self.left is None:
-            return False
-        else:
-            return True
-
-    def has_right_child(self):
-        if self.right is None:
-            return False
-        else:
-            return True
-
-
-class BinaryTree(object):
-
-    def __init__(self, character=None):
-        self.root = HuffmanNode(character)
-
-    def get_root(self):
-        return self.root
 
 
 class MinHeap(object):
@@ -184,25 +164,24 @@ class MinHeap(object):
 
 
 if __name__ == "__main__":
-
     # test Huffmann encoding
-    print('-----------test huffmann encoding-----------')
+    print('-----------test 1 huffmann encoding-----------')
 
     codes = {}
     a_great_sentence = "The bird is the word"
     print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
     print("The content of the data is: {}\n".format(a_great_sentence))
 
-    huffmann_compressor = HuffmanCompressor(a_great_sentence)
-    encoded_data, tree = huffmann_compressor.huffman_encoding()
+    huffman_compressor = HuffmanCompressor()
+    encoded_data, tree = huffman_compressor.huffman_encoding(a_great_sentence)
 
     print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
     print("The content of the encoded data is: {}\n".format(encoded_data))
 
-    """
-    decoded_data = huffman_decoding(encoded_data, tree)
+    decoded_data = huffman_compressor.huffman_decoding(encoded_data, tree)
 
     print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
     print("The content of the encoded data is: {}\n".format(decoded_data))
-    
-    """
+
+
+    print('-----------test 1 huffmann encoding-----------')
