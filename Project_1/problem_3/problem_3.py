@@ -1,5 +1,5 @@
 import sys
-import heapq
+# import heapq
 
 
 class HuffmannCompressor(object):
@@ -8,15 +8,15 @@ class HuffmannCompressor(object):
         self.data = data
         self.frequency_dictionary = None
         self.is_encoded = False
+        self.min_heap = None
 
     def huffman_encoding(self):
         """Encodes the input string using Huffmann Compression"""
         self.frequency_dictionary = self.determine_character_frequency()
 
         # create node for each row in table
-        min_heap = self.heapify_frequency_dictionary()
+        self.heapify_frequency_dictionary()
         print('-----------------------------')
-        min_heap_2 = self.heapify_frequency_dictionary_2()
 
         # build and sort list of nodes (minHeap as priority queue)
         # A) pop out two nodes with min frequency from priority queue
@@ -43,20 +43,23 @@ class HuffmannCompressor(object):
         print(self.frequency_dictionary)
 
     def heapify_frequency_dictionary(self):
-        min_heap = []
+        self.min_heap = MinHeap(len(self.frequency_dictionary))
         for character, frequency in self.frequency_dictionary.items():
             new_node = HuffmannNode(character, frequency)
             print('Heapifying', new_node.character, new_node.frequency)
-            heapq.heappush(min_heap, new_node)
-        return min_heap
+            self.min_heap.insert(new_node)
 
-    def heapify_frequency_dictionary_2(self):
-        min_heap = MinHeap(len(self.frequency_dictionary))
+        # TODO: Delete alternative version using standard library
+        """ 
+        self.min_heap = []
         for character, frequency in self.frequency_dictionary.items():
             new_node = HuffmannNode(character, frequency)
             print('Heapifying', new_node.character, new_node.frequency)
-            min_heap.insert(new_node)
-        return min_heap
+            heapq.heappush(self.min_heap, new_node)
+        """
+
+    def get_min_heap(self):
+        self.min_heap.print_heap()
 
     def huffman_decoding(self, data, tree):
 
@@ -113,7 +116,7 @@ class HuffmannNode(object):
         if self.right is None:
             return False
         else:
-            True
+            return True
 
 
 class BinaryTree(object):
@@ -128,19 +131,23 @@ class BinaryTree(object):
 class MinHeap(object):
 
     def __init__(self, maxsize):
-        self.maxsize = maxsize
+        self.maxsize = maxsize * 2
         self.size = 0
-        self.heap = [None] * (self.maxsize + 1)
+        self.heap = [0] * (self.maxsize + 1)
         self.ROOT = 1  # CONSTANT
 
     def get_parent(self, position):
-        return position // 2
+        parent = position // 2
+        if parent == 0:
+            parent = 1
+        return parent
 
     def get_left_child(self, position):
         return 2 * position
 
     def get_right_child(self, position):
         return (2 * position) + 1
+    # TODO: Check if changing from returning position to returning node
 
     def is_leaf(self, position):
         if (self.size // 2) <= position <= self.size:
@@ -178,24 +185,29 @@ class MinHeap(object):
                 if self.heap[self.get_left_child(position)] < self.heap[self.get_right_child(position)]:
 
                     self.swap_nodes(position, self.get_left_child(position))
-                    self.heapify_node(self.get_left_child(position))
+                    self.heapify_node(self.get_left_child(position))  # recursion
 
                 else:
                     self.swap_nodes(position, self.get_right_child(position))
-                    self.heapify_node(self.get_right_child(position))
+                    self.heapify_node(self.get_right_child(position))  # recursion
 
-    def Print(self):
+    def print_heap(self):
         for i in range(1, (self.size // 2) + 1):
-            print(" PARENT : " + str(self.heap[i]) + " LEFT CHILD : " +
-                  str(self.heap[2 * i]) + " RIGHT CHILD : " +
-                  str(self.heap[2 * i + 1]))
+            if not self.heap[2 * i]:
+                print(" PARENT : " + str(self.heap[i].frequency) + " LEFT CHILD : None RIGHT CHILD : None")
+            elif not self.heap[2 * i + 1]:
+                print(" PARENT : " + str(self.heap[i].frequency) + " LEFT CHILD : " +
+                      str(self.heap[2 * i].frequency) + " RIGHT CHILD : None")
+            else:
+                print(" PARENT : " + str(self.heap[i].frequency) + " LEFT CHILD : " +
+                      str(self.heap[2 * i].frequency) + " RIGHT CHILD : " + str(self.heap[2 * i + 1].frequency))
 
     def build_heap(self):
         for position in range(self.size // 2, 0, -1):
             self.heapify_node(position)
 
 
-class BinaryTree(object):
+class HuffmannTree(object):
 
     def __init__(self, character=None):
         self.root = HuffmannNode(character)
@@ -205,7 +217,7 @@ class BinaryTree(object):
 
 
 if __name__ == "__main__":
-    """
+
     # test heap
     minHeap = MinHeap(15)
     frequencies = [6, 2, 17, 120, 44, 129, 1, 22, 19]
@@ -213,7 +225,7 @@ if __name__ == "__main__":
         node = HuffmannNode('test', frequency)
         minHeap.insert(node)
     minHeap.build_heap()
-    minHeap.Print()
+    minHeap.print_heap()
     
     # Expected output:  
     #     PARENT : 1 LEFT CHILD : 6 RIGHT CHILD : 2
@@ -224,7 +236,7 @@ if __name__ == "__main__":
     print("Min value: " + str(minHeap.remove()))
     # expected output: 1
 
-    minHeap.Print()
+    minHeap.print_heap()
     
     # Expected output: 
     #     PARENT : 2 LEFT CHILD : 6 RIGHT CHILD : 17
@@ -235,7 +247,6 @@ if __name__ == "__main__":
     print("New Min value: " + str(minHeap.remove()))
     # expected output: 2
 
-    """
 
     # test Huffmann encoding
     codes = {}
@@ -245,7 +256,12 @@ if __name__ == "__main__":
 
     huffmann_compressor = HuffmannCompressor(a_great_sentence)
     encoded_data, tree = huffmann_compressor.huffman_encoding()
+
     huffmann_compressor.get_frequency_dictionary()
+    # expected output: {'T': 1, 'h': 2, 'e': 2, ' ': 4, 'b': 1, 'i': 2, 'r': 2, 'd': 2, 's': 1, 't': 1, 'w': 1, 'o': 1}
+
+    huffmann_compressor.get_min_heap()
+
 
     """
     print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
