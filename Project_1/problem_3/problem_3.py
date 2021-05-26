@@ -1,5 +1,5 @@
 import sys
-# import heapq
+import heapq
 
 
 class HuffmannCompressor(object):
@@ -9,28 +9,85 @@ class HuffmannCompressor(object):
         self.frequency_dictionary = None
         self.is_encoded = False
         self.min_heap = None
+        self.leaf_nodes = None
 
     def huffman_encoding(self):
         """Encodes the input string using Huffmann Compression"""
+
+        # determine frequency of characters in text
         self.frequency_dictionary = self.determine_character_frequency()
 
-        # create node for each row in table
+        # create node for each row in table and build + sort list of nodes (minHeap as priority queue)
         self.heapify_frequency_dictionary()
-        print('-----------------------------')
 
-        # build and sort list of nodes (minHeap as priority queue)
-        # A) pop out two nodes with min frequency from priority queue
-        # B) create new node with frequency as sum of two nodes popped out (new Node in Huffmann Tree)
-        # C) reinsert new node in priority queue
-        # repeat A)-C) until only one element in prio queue
+        # create Huffmann Tree by poping out two nodes with min frequency from priority queue,
+        # create new node with frequency as sum of two nodes popped out and reinsert new node in priority queue
+        # repeat until one element in prio queue
+        self.create_huffmann_tree()
+
+
         # assign zero to left, 1 to right
-        # traverse Huffmann Tree rfrom root to leaf -> results in binary code
+        # traverse Huffmann Tree from root to leaf -> results in binary code
+
+        # for entry in dictionary
+        codes = {}
+        for leaf_node in self.leaf_nodes:
+            print(leaf_node.character)
+            print(self.path_from_root_to_node(self.min_heap[0], leaf_node.character))
+        # run root to path
+
+
         # change status of is_encoded
+        print('-------------------')
 
         return None, None
 
+    def path_from_root_to_node(self, root_node, leaf_node_character):
+        """
+        Assuming data as input to find the node
+        The solution can be easily changed to find a node instead of data
+        :param leaf_node:
+        :return path:
+        """
+        path = self.path_from_node_to_root(root_node, leaf_node_character, [])
+        return list(reversed(path))
+
+    def path_from_node_to_root(self, root_node, leaf_node_character, code):
+
+        # base case
+        if root_node is None:
+            return None
+
+        elif root_node.character == leaf_node_character:
+            return code
+
+        left_answer = self.path_from_node_to_root(root_node.left, leaf_node_character, code)
+        if left_answer is not None:
+            left_answer.append('0')
+            return left_answer
+
+        right_answer = self.path_from_node_to_root(root_node.right, leaf_node_character, code)
+        if right_answer is not None:
+            right_answer.append('1')
+            return right_answer
+        return None
+
+    def make_codes_recursive(self, root, current_code):
+        codes = {}
+
+        if root is None:
+            return {}
+
+        if root.char is not None:
+            codes[root.char] = current_code
+
+        codes.update(self.make_codes_recursive(root.left, current_code + "0"))
+        codes.update(self.make_codes_recursive(root.right, current_code + "1"))
+        return codes
+
+
     def determine_character_frequency(self):
-        """Count frequency of characters in input string called data"""
+        """Counts frequency of characters in input string called data and saves result in dictionary"""
         frequency_dictionary = dict()
         for character in self.data:
             if character not in frequency_dictionary:
@@ -40,9 +97,12 @@ class HuffmannCompressor(object):
         return frequency_dictionary
 
     def get_frequency_dictionary(self):
+        """This function is for test purposes, to see the dictionary without debugging"""
         print(self.frequency_dictionary)
 
     def heapify_frequency_dictionary(self):
+        """Creates min heap as priority queue from dictionary containing characters and their frequencies"""
+        """
         self.min_heap = MinHeap(len(self.frequency_dictionary))
         for character, frequency in self.frequency_dictionary.items():
             new_node = HuffmannNode(character, frequency)
@@ -56,10 +116,17 @@ class HuffmannCompressor(object):
             new_node = HuffmannNode(character, frequency)
             print('Heapifying', new_node.character, new_node.frequency)
             heapq.heappush(self.min_heap, new_node)
-        """
+        self.leaf_nodes = self.min_heap.copy()
 
-    def get_min_heap(self):
-        self.min_heap.print_heap()
+    def create_huffmann_tree(self):
+        """Creates a Huffmann tree from the priority queue"""
+        while len(self.min_heap) > 1:
+            first_node = heapq.heappop(self.min_heap)
+            second_node = heapq.heappop(self.min_heap)
+            new_node = HuffmannNode('merged', first_node.frequency + second_node.frequency)
+            new_node.left = first_node
+            new_node.right = second_node
+            heapq.heappush(self.min_heap, new_node)
 
     def huffman_decoding(self, data, tree):
 
@@ -217,8 +284,9 @@ class HuffmannTree(object):
 
 
 if __name__ == "__main__":
-
+    """
     # test heap
+    print('-----------test heap class-----------')
     minHeap = MinHeap(15)
     frequencies = [6, 2, 17, 120, 44, 129, 1, 22, 19]
     for frequency in frequencies:
@@ -227,28 +295,23 @@ if __name__ == "__main__":
     minHeap.build_heap()
     minHeap.print_heap()
     
-    # Expected output:  
-    #     PARENT : 1 LEFT CHILD : 6 RIGHT CHILD : 2
-    #     PARENT : 6 LEFT CHILD : 19 RIGHT CHILD : 44
-    #     PARENT : 2 LEFT CHILD : 129 RIGHT CHILD : 17
-    #     PARENT : 19 LEFT CHILD : 120 RIGHT CHILD : 22
-
-    print("Min value: " + str(minHeap.remove()))
+    # Expected output: 
+    
+    min_value = minHeap.remove()
+    print("Min value: " + str(min_value.frequency))
     # expected output: 1
 
     minHeap.print_heap()
     
     # Expected output: 
-    #     PARENT : 2 LEFT CHILD : 6 RIGHT CHILD : 17
-    #     PARENT : 6 LEFT CHILD : 19 RIGHT CHILD : 44
-    #     PARENT : 17 LEFT CHILD : 129 RIGHT CHILD : 22
-    #     PARENT : 19 LEFT CHILD : 120 RIGHT CHILD : 22
 
-    print("New Min value: " + str(minHeap.remove()))
+    min_value = minHeap.remove()
+    print("New Min value: " + str(min_value.frequency))
     # expected output: 2
-
+    """
 
     # test Huffmann encoding
+    print('-----------test huffmann encoding-----------')
     codes = {}
     a_great_sentence = "The bird is the word"
     print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
@@ -258,9 +321,7 @@ if __name__ == "__main__":
     encoded_data, tree = huffmann_compressor.huffman_encoding()
 
     huffmann_compressor.get_frequency_dictionary()
-    # expected output: {'T': 1, 'h': 2, 'e': 2, ' ': 4, 'b': 1, 'i': 2, 'r': 2, 'd': 2, 's': 1, 't': 1, 'w': 1, 'o': 1}
-
-    huffmann_compressor.get_min_heap()
+    # expected output: {'T': 1, 'h': 2, 'e': 2, ' ': 4, 'b': 1, 'i': 2, 'r': 2, 'd': 2, 's': 1, 't': 1, 'w': 1, 'o': 1}_
 
 
     """
