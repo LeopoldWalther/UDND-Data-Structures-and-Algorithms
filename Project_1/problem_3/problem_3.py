@@ -2,6 +2,29 @@ import sys
 import heapq
 
 
+class HuffmanNode(object):
+    """Node Class to be used for Hufman Tree and Min Heap"""
+    def __init__(self, character=None, frequency=None):
+        self.left = None
+        self.right = None
+        self.character = character
+        self.frequency = frequency
+
+    def __gt__(self, other):
+        if not other:
+            return -1
+        if not isinstance(other, HuffmanNode):
+            return -1
+        return self.frequency > other.frequency
+
+    def __lt__(self, other):
+        if not other:
+            return -1
+        if not isinstance(other, HuffmanNode):
+            return -1
+        return self.frequency < other.frequency
+
+
 class HuffmanCompressor(object):
 
     def __init__(self):
@@ -15,8 +38,13 @@ class HuffmanCompressor(object):
 
     def huffman_encoding(self, data):
         """Encodes the input string using Huffman Compression"""
+
         self.decoded_data = data
         self.encoded_data = ''
+
+        # edge case empty input
+        if self.decoded_data == self.encoded_data:
+            return self.encoded_data, None
 
         self.determine_character_frequency()
         self.create_priority_list_from_frequency_dictionary()
@@ -24,13 +52,6 @@ class HuffmanCompressor(object):
         self.encode_characters_with_huffman_tree()
         self.create_encoded_string()
         huffman_tree = heapq.heappop(self.min_heap)
-
-        print('-------------------')
-        print(self.frequency_dictionary)
-        print(self.encoding_dictionary)
-        print(self.encoded_data)
-        print('-------------------')
-
         return self.encoded_data, huffman_tree
 
     def determine_character_frequency(self):
@@ -119,55 +140,11 @@ class HuffmanCompressor(object):
         return text
 
 
-class HuffmanNode(object):
-    """Node Class to be used for Hufman Tree and Min Heap"""
-    def __init__(self, character=None, frequency=None):
-        self.left = None
-        self.right = None
-        self.character = character
-        self.frequency = frequency
-
-    def __gt__(self, other):
-        if not other:
-            return -1
-        if not isinstance(other, HuffmanNode):
-            return -1
-        return self.frequency > other.frequency
-
-    def __lt__(self, other):
-        if not other:
-            return -1
-        if not isinstance(other, HuffmanNode):
-            return -1
-        return self.frequency < other.frequency
-
-
-class MinHeap(object):
-
-    def __init__(self, maxsize):
-        self.maxsize = maxsize * 2
-        self.size = 0
-        self.heap = [0] * (self.maxsize + 1)
-        self.ROOT = 1  # CONSTANT
-
-    def get_parent(self, position):
-        parent = position // 2
-        if parent == 0:
-            parent = 1
-        return parent
-
-    def get_left_child(self, position):
-        return 2 * position
-
-    def get_right_child(self, position):
-        return (2 * position) + 1
-
-
 if __name__ == "__main__":
-    # test Huffmann encoding
-    print('-----------test 1 huffmann encoding-----------')
 
-    codes = {}
+    # test Huffmann encoding
+
+    print('-----------test 1 huffmann encoding-----------')
     a_great_sentence = "The bird is the word"
     print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
     print("The content of the data is: {}\n".format(a_great_sentence))
@@ -183,5 +160,65 @@ if __name__ == "__main__":
     print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
     print("The content of the encoded data is: {}\n".format(decoded_data))
 
+    print('-----------test 2 huffmann encoding: empty string-----------')
+    a_great_sentence = ""
+    print("The content of the data is: {}\n".format(a_great_sentence))
 
-    print('-----------test 1 huffmann encoding-----------')
+    huffman_compressor = HuffmanCompressor()
+    encoded_data, tree = huffman_compressor.huffman_encoding(a_great_sentence)
+
+    print("The content of the encoded data is: {}\n".format(encoded_data))
+
+    decoded_data = huffman_compressor.huffman_decoding(encoded_data, tree)
+
+    print("The content of the encoded data is: {}\n".format(decoded_data))
+
+    print('-----------test 3 huffmann encoding: a lot of characters with low frequency-----------')
+    a_great_sentence = "abcdefghijklmnopqrstuvwxyz1234567890?ßäöü"
+    print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
+    print("The content of the data is: {}\n".format(a_great_sentence))
+
+    huffman_compressor = HuffmanCompressor()
+    encoded_data, tree = huffman_compressor.huffman_encoding(a_great_sentence)
+
+    print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
+    print("The content of the encoded data is: {}\n".format(encoded_data))
+
+    decoded_data = huffman_compressor.huffman_decoding(encoded_data, tree)
+
+    print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
+    print("The content of the encoded data is: {}\n".format(decoded_data))
+
+    print('-----------test 4 huffmann encoding: long text-----------')
+    a_great_sentence = "Who am I? Why am I here?!? What time is it and in what year do I live. Which universe?" \
+                       "Can somebody answer my questions, this is nuts!"
+    print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
+    print("The content of the data is: {}\n".format(a_great_sentence))
+
+    huffman_compressor = HuffmanCompressor()
+    encoded_data, tree = huffman_compressor.huffman_encoding(a_great_sentence)
+
+    print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
+    print("The content of the encoded data is: {}\n".format(encoded_data))
+
+    decoded_data = huffman_compressor.huffman_decoding(encoded_data, tree)
+
+    print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
+    print("The content of the encoded data is: {}\n".format(decoded_data))
+
+    print('-----------test 5 huffmann encoding: single character repeated-----------')
+
+    a_great_sentence = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?"
+    print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
+    print("The content of the data is: {}\n".format(a_great_sentence))
+
+    huffman_compressor = HuffmanCompressor()
+    encoded_data, tree = huffman_compressor.huffman_encoding(a_great_sentence)
+
+    print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
+    print("The content of the encoded data is: {}\n".format(encoded_data))
+
+    decoded_data = huffman_compressor.huffman_decoding(encoded_data, tree)
+
+    print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
+    print("The content of the encoded data is: {}\n".format(decoded_data))
