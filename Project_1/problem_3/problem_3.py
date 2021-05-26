@@ -184,34 +184,10 @@ class MinHeap(object):
 
 
 if __name__ == "__main__":
-    """
-    # test heap
-    print('-----------test heap class-----------')
-    minHeap = MinHeap(15)
-    frequencies = [6, 2, 17, 120, 44, 129, 1, 22, 19]
-    for frequency in frequencies:
-        node = HuffmannNode('test', frequency)
-        minHeap.insert(node)
-    minHeap.build_heap()
-    minHeap.print_heap()
-    
-    # Expected output: 
-    
-    min_value = minHeap.remove()
-    print("Min value: " + str(min_value.frequency))
-    # expected output: 1
-
-    minHeap.print_heap()
-    
-    # Expected output: 
-
-    min_value = minHeap.remove()
-    print("New Min value: " + str(min_value.frequency))
-    # expected output: 2
-    """
 
     # test Huffmann encoding
     print('-----------test huffmann encoding-----------')
+
     codes = {}
     a_great_sentence = "The bird is the word"
     print("The size of the data is: {}\n".format(sys.getsizeof(a_great_sentence)))
@@ -220,10 +196,10 @@ if __name__ == "__main__":
     huffmann_compressor = HuffmanCompressor(a_great_sentence)
     encoded_data, tree = huffmann_compressor.huffman_encoding()
 
-    """
     print("The size of the encoded data is: {}\n".format(sys.getsizeof(int(encoded_data, base=2))))
     print("The content of the encoded data is: {}\n".format(encoded_data))
 
+    """
     decoded_data = huffman_decoding(encoded_data, tree)
 
     print("The size of the decoded data is: {}\n".format(sys.getsizeof(decoded_data)))
