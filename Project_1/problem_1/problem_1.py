@@ -11,6 +11,9 @@ class LRU_Cache(object):
 
     def __init__(self, capacity):  # all operations are of O(1)
         """Initialize class variables"""
+        if capacity <= 0:
+            print('The capacity of the LRU Cache should be a positive integer.')
+            return None
         self.cache = dict()
         self.capacity = capacity
         self.current_size = 0
@@ -94,7 +97,7 @@ class LRU_Cache(object):
         self.tail.next = None
 
 
-# Tests:
+# Test 1:
 our_cache = LRU_Cache(5)  # initialize class
 our_cache.set(1, 1)  # fill cache
 our_cache.set(2, 2)
@@ -125,5 +128,44 @@ print('Output:', our_cache.get(4), '- Expected output: -1, as cache reached max 
 print('Output:', our_cache.get(5), '- Expected output: 5')
 # returns -1
 
-# our_cache.set() # should throw error)
-# our_cache.set(None) # should throw error
+
+# Test 2:
+our_cache = LRU_Cache(900000)  # initialize class
+our_cache.set(1, 1)  # fill cache
+our_cache.set(2, 2)
+our_cache.set(3, 3)
+our_cache.set(4, 4)
+
+print('Output:', our_cache.get(1), '- Expected output: 1')
+# returns 1
+
+print('Output:', our_cache.get(2), '- Expected output: 2')
+# returns 2
+
+print('Output:', our_cache.get(9), '- Expected output: -1, because 9 is not present in the cache')
+# returns -1 because 9 is not present in the cache
+
+our_cache.set(5, 5)
+our_cache.set(6, 6)  # deletes 3
+
+print('Output:', our_cache.get(3), '- Expected output: -1, as cache reached max capacity and 3 was the LRU')
+# returns -1 because the cache reached it's capacity and 3 was the least recently used entry
+
+our_cache.set(345678909876543234567, 345678909876543234567)
+print('Output:', our_cache.get(345678909876543234567), '- Expected output: 345678909876543234567')
+# returns 345678909876543234567
+print('Output:', our_cache.get(4), '- Expected output: -1, as cache reached max capacity and 4 was the LRU')
+# returns 4
+
+print('Output:', our_cache.get(5), '- Expected output: 5')
+# returns -1
+
+
+
+# Test 2:
+our_cache = LRU_Cache(-1)  # initialize class
+
+
+# Test 3:
+our_cache = LRU_Cache(-1)  # initialize class
+
