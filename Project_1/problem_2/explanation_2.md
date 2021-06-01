@@ -32,4 +32,4 @@ entities in the directory.
 ### Space
 There are two lists used. One list holding all paths to files with the required
 suffix and one list holding all entities of the current directory. Both lists
-are instantiated for each recursion.
+are instantiated for each recursion. O(n)
