@@ -197,4 +197,4 @@ for i in element_2:
 print(union(linked_list_9, linked_list_10))
 # -1 -> -2 -> -2.1 -> -2.1 ->
 print(intersection(linked_list_9, linked_list_10))
-# -2.1 -> 
+# -2.1 ->
