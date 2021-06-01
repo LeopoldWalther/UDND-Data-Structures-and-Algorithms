@@ -38,3 +38,5 @@ The following instance variables require memory, when an instance is created.
 - self.current_size --> integer
 - self.head = None --> a pointer to a Node
 - self.tail = None --> a pointer to a Node
+
+The space complexity of set() is O(n), as the space grows linearly with the input.
