@@ -52,7 +52,7 @@ class Block:
             self.timestamp, self.data, self.previous_hash, self.hash))
 
 
-# Tests
+# Test 1
 blockchain = Blockchain()
 blockchain.append('This is the first block!')
 blockchain.append('Yep, this is number two')
@@ -62,3 +62,23 @@ block = blockchain.head
 while block is not None:
     print(block)
     block = block.next
+
+# Test 2
+b1 = Blockchain()
+b1.append("First")
+b1.append("Second")
+b1.append("Third")
+print(b1)               # should print three block data
+
+# Test 3
+b2 = Blockchain()
+print(b2)               # should print empty because there is no block in b2 chain
+
+# Test 4
+b3 = Blockchain()
+b3.append("one")
+print(b3.head.timestamp)
+b3.append("two")
+print(b3.head.timestamp)
+b3.append("three")
+print(b3.head.timestamp)    # all the timestamps are same because they are declared at same time (Hrs:Min)
