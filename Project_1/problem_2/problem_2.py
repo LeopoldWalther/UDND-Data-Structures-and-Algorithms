@@ -46,4 +46,7 @@ print(find_files('.h', '.'))
 #  returns ['./testdir/subdir3/subsubdir1/b.h', './testdir/subdir5/a.h', './testdir/t1.h', './testdir/subdir1/a.h']
 
 print(find_files('.h', ''))
-# returns error
+# invalid path
+
+print(find_files('.x', '.'))
+#  returns []
