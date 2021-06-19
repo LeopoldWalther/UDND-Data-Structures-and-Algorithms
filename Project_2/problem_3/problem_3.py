@@ -6,8 +6,6 @@
 # for e.g. [1, 2, 3, 4, 5] the expected answer would be [531, 42]. Another expected answer can be [542, 31].
 # In scenarios such as these when there are more than one possible answers, return any one.
 
-# go through input list and alternately add element to both output numbers
-
 def rearrange_digits(input_list):
     """
     Rearrange Array Elements so as to form two number such that their sum is maximum.
