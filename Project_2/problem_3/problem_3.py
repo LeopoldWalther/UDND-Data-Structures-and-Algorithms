@@ -20,7 +20,7 @@ def rearrange_digits(input_list):
     if input_list is None or input_list == []:
         return -1, -1
 
-    for element in input_list:
+    for element in input_list:  # O(n)
         if type(element) is not int:
             return -1, -1
 
@@ -29,7 +29,7 @@ def rearrange_digits(input_list):
     counter = 0
 
     sorted_input_list = mergesort(input_list)  # Time: O(n*log(n)), Space: O(n)
-    for element in sorted_input_list:
+    for element in sorted_input_list:  # O(n)
         if counter % 2 == 0:
             number_one.append(str(element))
         else:
@@ -42,7 +42,7 @@ def rearrange_digits(input_list):
     return int(number_one), int(number_two)
 
 
-def mergesort(items):
+def mergesort(items):  # O(n*log(n))
     """Mergesort by dividing array into single elements and sorting when merging bac together"""
     # base case
     if len(items) <= 1:

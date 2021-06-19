@@ -1,4 +1,3 @@
-
 # Finding the Square Root of an Integer
 Find the square root of the integer without using any Python library. 
 Find the floor value of the square root.
