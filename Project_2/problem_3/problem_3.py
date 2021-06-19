@@ -17,6 +17,13 @@ def rearrange_digits(input_list):
     Returns:
        (int),(int): Two maximum sums
     """
+    if input_list is None or input_list == []:
+        return -1, -1
+
+    for element in input_list:
+        if type(element) is not int:
+            return -1, -1
+
     number_one = []
     number_two = []
     counter = 0
@@ -84,5 +91,26 @@ def test_function(test_case):
         print("Fail")
 
 
-test_function([[1, 2, 3, 4, 5], [542, 31]])
-test_case = [[4, 6, 2, 5, 9, 8], [964, 852]]
+print('--------------------given test functions--------------------')
+test_case_1 = [[4, 6, 2, 5, 9, 8], [964, 852]]
+test_function(test_case_1)
+
+print('--------------------repeating digits--------------------')
+test_case_2 = [[0, 1, 2, 3, 4, 5, 6, 9, 9, 9, 9, 9, 9, 3, 4, 5, 6], [999654320, 99965431]]
+test_function(test_case_2)
+
+print('--------------------only one int, but repeated--------------------')
+test_case_3 = [[3, 3, 3, 3, 3, 3, 3, 3, 3, 3], [33333, 33333]]
+test_function(test_case_3)
+
+print('--------------------character in list--------------------')
+test_case_4 = [[4, 6, 'a', 5, 9, 8], [-1, -1]]
+test_function(test_case_4)
+
+print('--------------------empty list--------------------')
+test_case_5 = [[], [-1, -1]]
+test_function(test_case_5)
+
+print('--------------------None for list--------------------')
+test_case_5 = [None, [-1, -1]]
+test_function(test_case_5)
