@@ -14,23 +14,23 @@ def sort_012(input_list):
     if input_list is None:
         return -1
 
-    zero = []
-    one = []
-    two = []
+    zeros = []
+    ones = []
+    twos = []
 
     for element in input_list:
         if element == 0:
-            zero.append(element)
+            zeros.append(element)
         elif element == 1:
-            one.append(element)
+            ones.append(element)
         elif element == 2:
-            two.append(element)
+            twos.append(element)
         else:
             return -1
 
-    zero += one + two
+    zeros += ones + twos
 
-    return zero
+    return zeros
 
 
 def test_function(test_case):
