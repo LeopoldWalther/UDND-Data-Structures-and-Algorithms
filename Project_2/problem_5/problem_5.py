@@ -45,7 +45,6 @@ class Trie(object):
 
         for char in word:
             current_node.insert(char)
-
             current_node = current_node.children[char]
 
         current_node.is_word = True
