@@ -14,23 +14,25 @@ def sort_012(input_list):
     if input_list is None:
         return -1
 
-    zeros = []
-    ones = []
-    twos = []
+    low = 0
+    mid = 0
+    high = len(input_list)-1
 
-    for element in input_list:
-        if element == 0:
-            zeros.append(element)
-        elif element == 1:
-            ones.append(element)
-        elif element == 2:
-            twos.append(element)
+    while mid <= high:
+        if input_list[mid] == 0:
+            input_list[mid], input_list[low] = input_list[low], input_list[mid]
+            low += 1
+            mid += 1
+        elif input_list[mid] == 1:
+            mid += 1
+        elif input_list[mid] == 2:
+            input_list[mid], input_list[high] = input_list[high], input_list[mid]
+            high -= 1
         else:
-            return -1
+            return None
 
-    zeros += ones + twos
+    return input_list
 
-    return zeros
 
 
 def test_function(test_case):
