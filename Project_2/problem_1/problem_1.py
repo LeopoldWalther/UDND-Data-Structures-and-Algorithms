@@ -9,12 +9,15 @@ def sqrt(number: int) -> int:
     Returns:
        int: Floored Square Root
     """
+    if type(number) is not int:
+        return None
+
     if number is None:
         print('Input has to be of type integer.')
         return None
 
     elif number < 0:
-        return -1
+        return None
 
     elif number == 0 or number == 1:
         return number
@@ -45,3 +48,5 @@ print("Pass" if (0 == sqrt(0)) else "Fail")
 print("Pass" if (4 == sqrt(16)) else "Fail")
 print("Pass" if (1 == sqrt(1)) else "Fail")
 print("Pass" if (5 == sqrt(27)) else "Fail")
+print('Pass' if (sqrt(-55) is None) else 'Fail')
+print('Pass' if (sqrt(0.3) is None) else 'Fail')
