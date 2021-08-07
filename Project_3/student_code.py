@@ -42,7 +42,7 @@ class AStarRoutePlanner(object):
 
         # distance from next intersection to destiny
         h_function = self.euclidean_distance(next_intersection_index, self.destination_intersection_index)
-        # TODO: save calculated distances in self.distances_to_destiny ? 
+        # TODO: save calculated distances in self.distances_to_destiny ?
 
         return g_function + h_function
 
@@ -55,25 +55,37 @@ class AStarRoutePlanner(object):
         return self.road_map.roads[intersection_index]
 
     def explore(self):
-        print(f'\n Start exploring: \n')
-        # while self.destination_intersection not in self.explored:
+        print(f'\nStart exploring:\n')
+        while self.destination_intersection_index not in self.explored:
 
-        for intersection_index in self.road_map.roads[self.current_intersection_index]:
+            min_cost = float('inf')
+            cheapest_road = -1
+            for intersection_index in self.road_map.roads[self.current_intersection_index]:
 
-            # add roads of current intersection to frontier if not already in frontier or explored
-            if intersection_index not in self.explored and intersection_index not in self.frontier:
-                self.frontier.append(intersection_index)
+                # add roads of current intersection to frontier if not already in frontier or explored
+                if intersection_index not in self.explored and intersection_index not in self.frontier:
+                    self.frontier.append(intersection_index)
 
-            # calculate for each point the actual distance to travel and the euclidean distance from there to goal
-            value = self.evaluation_function(intersection_index)
+                # calculate for each point the actual distance to travel and the euclidean distance from there to goal
+                road_cost = self.evaluation_function(intersection_index)
 
-            print(f' Road: {intersection_index} '
-                  f'with coordinates: {self.get_intersection_coordinates(intersection_index)} '
-                  f'has function value: {value}')
+                # save smallest value
+                if road_cost < min_cost:
+                    min_cost = road_cost
+                    cheapest_road = intersection_index
 
-        # remove current intersection from frontier and add to explored
+                print(f'Road: {intersection_index} '
+                      f'with coordinates: {self.get_intersection_coordinates(intersection_index)} '
+                      f'has function value: {road_cost}')
 
-        # make road with smallest value the new current intersection
+            # remove current intersection from frontier and add to explored
+            self.frontier.remove(self.current_intersection_index)
+            self.explored.append(self.current_intersection_index)
+
+            # make road with smallest value the new current intersection
+            print(f'\nMoving from {self.current_intersection_index} to {cheapest_road}')
+            print(f'Explored intersections: {self.explored}\nFrontier: {self.frontier}\n')
+            self.current_intersection_index = cheapest_road
 
 
 # start = 2
@@ -86,8 +98,9 @@ destiny = 34
 route_planner = AStarRoutePlanner(road_map=map_40, starting_intersection=start, destination_intersection=destiny)
 
 start_coordinates = route_planner.get_intersection_coordinates(start)
-print(f' Starting index: {start}')
-print(f' Starting coordinates: {start_coordinates}')
+print(f'Starting index: {start}')
+print(f'Starting coordinates: {start_coordinates}')
 start_roads = route_planner.get_intersection_roads(start)
 route_planner.explore()
 
+# TODO: Working version with a loop, now change to recursive/dynamic programming and keeping track of cost
