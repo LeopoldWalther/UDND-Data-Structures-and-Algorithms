@@ -1,106 +1,61 @@
-from helpers import load_map
+# When i got stuck I used https://knowledge.udacity.com/questions/195897#195955
+
 import math
+from queue import PriorityQueue
+from helpers import load_map
+
+
+def shortest_path(graph, starting_intersection, destiny_intersection):
+
+    frontier = PriorityQueue()
+    frontier.put(starting_intersection, 0)
+
+    previous_intersections = {starting_intersection: None}
+    path_costs = {starting_intersection: 0}
+
+    while not frontier.empty():
+        current_intersection = frontier.get()
+
+        if current_intersection == destiny_intersection:
+            generate_path(previous_intersections, starting_intersection, destiny_intersection)
+
+        for intersection_index in graph.roads[current_intersection]:
+            update_path_cost = path_costs[current_intersection] + euclidean_distance(graph.intersections[current_intersection], graph.intersections[intersection_index])
+
+            if intersection_index not in path_costs or update_path_cost < path_costs[intersection_index]:
+                path_costs[intersection_index] = update_path_cost
+                path_cost_with_goal_distance = update_path_cost + euclidean_distance(graph.intersections[current_intersection], graph.intersections[intersection_index])
+
+                frontier.put(intersection_index, path_cost_with_goal_distance)
+                previous_intersections[intersection_index] = current_intersection
+
+    return generate_path(previous_intersections, starting_intersection, destiny_intersection)
+
+
+def euclidean_distance(intersection_a, intersection_b):
+    """Calculates cartesian distance between two points for h-function."""
+
+    return math.sqrt(((intersection_a[0] - intersection_b[0]) ** 2) + ((intersection_a[1] - intersection_b[1]) ** 2))
+
+
+def generate_path(previous_intersections, starting_intersection, destiny_intersection):
+    current_intersection = destiny_intersection
+    best_path = [current_intersection]
+
+    while current_intersection != starting_intersection:
+        current_intersection = previous_intersections[current_intersection]
+        best_path.append(current_intersection)
+
+    best_path.reverse()
+
+    return best_path
+
+
 
 map_10 = load_map('map-10.pickle')
 map_40 = load_map('map-40.pickle')
 
-
-def shortest_path(M, start, goal):
-    print("shortest path called")
-    return
-
-
-class AStarRoutePlanner(object):
-    """ ... """
-
-    def __init__(self, road_map, starting_intersection, destination_intersection):
-        self.road_map = road_map
-        self.current_intersection_index = starting_intersection
-        self.destination_intersection_index = destination_intersection
-        self.frontier = [starting_intersection]  # list of nodes, which represent the farthest paths explored
-        self.explored = []  # list of nodes, which are in between the frontier nodes and the starting node
-        self.unexplored = list(self.road_map.intersections.keys())  # list of nodes, which are beyond the frontier
-        self.distances = [[9999 for x in range(len(self.road_map.intersections))] for x in range(len(self.road_map.intersections))]
-
-    def euclidean_distance(self, intersection_index_a, intersection_index_b):
-        """Calculates cartesian distance between two points for h-function."""
-
-        intersection_a_x, intersection_a_y = self.get_intersection_coordinates(intersection_index_a)
-        intersection_b_x, intersection_b_y = self.get_intersection_coordinates(intersection_index_b)
-
-        euclidean_distance = math.sqrt(
-            (intersection_b_x - intersection_a_x)**2 + (intersection_b_y - intersection_a_y)**2)
-
-        return euclidean_distance
-
-    def evaluation_function(self, next_intersection_index):
-        """Sum of g-function (actual distance travelled) and h-function (euclidean distance to goal)."""
-
-        # distance current intersection to next intersection
-        g_function = self.euclidean_distance(self.current_intersection_index, next_intersection_index)
-        # TODO: save calculated distances in self.distances ?
-
-        # distance from next intersection to destiny
-        h_function = self.euclidean_distance(next_intersection_index, self.destination_intersection_index)
-        # TODO: save calculated distances in self.distances_to_destiny ?
-
-        return g_function + h_function
-
-    def get_intersection_coordinates(self, intersection_index):
-        """Returns the tuple containing the x and y coordinates of a the given intersection index."""
-        return self.road_map.intersections[intersection_index]
-
-    def get_intersection_roads(self, intersection_index):
-        """Returns the list of roads connected to the given intersection index."""
-        return self.road_map.roads[intersection_index]
-
-    def explore(self):
-        print(f'\nStart exploring:\n')
-        while self.destination_intersection_index not in self.explored:
-
-            min_cost = float('inf')
-            cheapest_road = -1
-            for intersection_index in self.road_map.roads[self.current_intersection_index]:
-
-                # add roads of current intersection to frontier if not already in frontier or explored
-                if intersection_index not in self.explored and intersection_index not in self.frontier:
-                    self.frontier.append(intersection_index)
-
-                # calculate for each point the actual distance to travel and the euclidean distance from there to goal
-                road_cost = self.evaluation_function(intersection_index)
-
-                # save smallest value
-                if road_cost < min_cost:
-                    min_cost = road_cost
-                    cheapest_road = intersection_index
-
-                print(f'Road: {intersection_index} '
-                      f'with coordinates: {self.get_intersection_coordinates(intersection_index)} '
-                      f'has function value: {road_cost}')
-
-            # remove current intersection from frontier and add to explored
-            self.frontier.remove(self.current_intersection_index)
-            self.explored.append(self.current_intersection_index)
-
-            # make road with smallest value the new current intersection
-            print(f'\nMoving from {self.current_intersection_index} to {cheapest_road}')
-            print(f'Explored intersections: {self.explored}\nFrontier: {self.frontier}\n')
-            self.current_intersection_index = cheapest_road
-
-
-# start = 2
-# destiny = 6
-# route_planner = AStarRoutePlanner(road_map=map_10, starting_intersection=start, destination_intersection=destiny)
-
-start = 5
-destiny = 34
-# path=[5,16,37,12,34])
-route_planner = AStarRoutePlanner(road_map=map_40, starting_intersection=start, destination_intersection=destiny)
-
-start_coordinates = route_planner.get_intersection_coordinates(start)
-print(f'Starting index: {start}')
-print(f'Starting coordinates: {start_coordinates}')
-start_roads = route_planner.get_intersection_roads(start)
-route_planner.explore()
-
-# TODO: Working version with a loop, now change to recursive/dynamic programming and keeping track of cost
+path = shortest_path(graph=map_40,
+                     starting_intersection=8,
+                     destiny_intersection=24)
+assert path == [8, 14, 16, 37, 12, 17, 10, 24]
